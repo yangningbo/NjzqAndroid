@@ -1,5 +1,7 @@
 package com.cssweb.android.main;
 
+import java.util.UUID;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,6 +27,7 @@ import com.cssweb.android.common.DateTool;
 import com.cssweb.android.common.Global;
 import com.cssweb.android.connect.ConnService;
 import com.cssweb.android.service.AutoLoadAllStock;
+import com.cssweb.android.user.track.Gloable;
 import com.cssweb.android.util.ActivityUtil;
 import com.cssweb.android.util.CssSystem;
 import com.cssweb.quote.util.StockInfo;
@@ -79,7 +82,7 @@ public class SplashScreen extends Activity {
             // Detach our existing connection.
 //            unbindService(mConnection);
 //            mIsBound = false;
-        
+        Gloable.getInstance().setSessionid(UUID.randomUUID().toString());
 
     }
 

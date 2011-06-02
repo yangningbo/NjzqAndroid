@@ -12,7 +12,7 @@ public class TrackLoginReceiver extends BroadcastReceiver {
     public static final String LOGINTRACK = "http://172.16.1.24:8080/user_login?loginfo=";
 
     private String url;
-    
+
     private String jsobString;
 
     @Override
@@ -27,7 +27,7 @@ public class TrackLoginReceiver extends BroadcastReceiver {
                 String base64url = Base64Encoder.encode(getBroadcastString,
                         "gb2312");
                 if (url == null) {
-                    url = LOGINTRACK + base64url;
+                    url = LOGINTRACK + base64url+"==&ram=" + Math.random();
                     System.out.println(url);
                     sendHttpUrl();
                 }
@@ -38,13 +38,13 @@ public class TrackLoginReceiver extends BroadcastReceiver {
     }
 
     private void sendHttpUrl() {
+
         System.out.println(this.getClass().getName() + "."
                 + new Exception().getStackTrace()[0].getMethodName() + "()");
         if (url != null) {
-            jsobString=Conn.execute(url).toString();
+            jsobString = Conn.execute(url).toString();
             System.out.println(jsobString);
-            }
+        }
 
     }
-
 }

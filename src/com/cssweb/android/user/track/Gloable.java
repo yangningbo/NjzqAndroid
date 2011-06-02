@@ -24,6 +24,10 @@ public class Gloable {
     private String reso;// 分辨率
 
     private String netType;// 联网方式
+    
+    private String lastUid;//上一个栏目地址
+    
+    private String Opera;// * 此次访问的操作类型。 1: 更新状态 0: 新增
 
     private static Gloable INSTANCE = null;
 
@@ -121,6 +125,22 @@ public class Gloable {
 
     public void setReso(String reso) {
         this.reso = reso;
+    }
+
+    public void setLastUid(String lastUid) {
+        this.lastUid = lastUid;
+    }
+
+    public String getLastUid() {
+        return lastUid;
+    }
+
+    public void setOpera(String opera) {
+        Opera = opera;
+    }
+
+    public String getOpera() {
+        return Opera;
     }
 
 }

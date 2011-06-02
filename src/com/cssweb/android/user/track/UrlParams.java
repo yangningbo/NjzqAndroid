@@ -7,7 +7,7 @@ import android.content.Context;
 import com.cssweb.android.session.TradeUser;
 
 public class UrlParams {
-    private static Context context;
+    static Context context;
 
     static {
         context = CssApplication.getInstance();
@@ -21,8 +21,7 @@ public class UrlParams {
      * 
      * @return 客户代码
      */
-    @SuppressWarnings("unused")
-    private static String setCustID() {
+    public static String setCustID() {
         System.out.println(new Exception().getStackTrace()[0].getMethodName()
                 + "()");
         String cusid = null;
@@ -45,15 +44,220 @@ public class UrlParams {
      * 
      * @return 当前访问的栏目代码
      */
-    @SuppressWarnings("unused")
-    private static String setUrlID() {
-        String urlID = null;
+    public static String setUrlID() {
         String classname = null;
         context = CssApplication.getInstance();
         ActivityManager am = (ActivityManager) context
                 .getSystemService(Context.ACTIVITY_SERVICE);
         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
         classname = cn.getShortClassName();
+        return matchUID(classname);
+    }
+
+    /**
+     * 用户登陆后可能有的数据(交易用户)
+     * 
+     * @return 营业部编码
+     */
+    public static String setOrgID() {
+        String orgID = null;
+        int loginType = TradeUser.getInstance().getLoginType();
+        System.out.println(loginType);
+        if (loginType == 1) {
+            orgID = TradeUser.getInstance().getOrgid();
+
+        } else {
+            orgID = null;
+        }
+        return orgID;
+    }
+
+    /**
+     * @return 营业部名称
+     */
+    public static String setOrgDesc() {
+        String orgDesc = null;
+        int loginType = TradeUser.getInstance().getLoginType();
+        System.out.println(loginType);
+        if (loginType == 1) {
+            orgDesc = TradeUser.getInstance().getOrgName();
+        } else {
+            orgDesc = null;
+        }
+        return orgDesc;
+    }
+
+    /**
+     * 1：交易用户 2：体验用户 3：浏览用户 4：注册用户
+     * 
+     * @return 用户类型
+     */
+    public static String setUserType() {
+        String userType = null;
+        int loginType = TradeUser.getInstance().getLoginType();
+        if (loginType == 0) {// 浏览
+            userType = "3";
+        } else if (loginType == 1) {// 交易
+            userType = "1";
+        } else if (loginType == 3) {// 体验
+            userType = "2";
+        } else if (loginType == 4) {// 注册
+            userType = "4";
+        }
+        return userType;
+    }
+
+    /**
+     * @return 用户等级
+     */
+    public static String setUserLevel() {
+        String userLevel = null;
+        int loginType = TradeUser.getInstance().getLoginType();
+        if (loginType == 1 || loginType == 3) {
+            userLevel = TradeUser.getInstance().getUserLevel() + "";
+        }
+        return userLevel;
+    }
+
+    /**
+     * @return 真实姓名
+     */
+    public static String setRealName() {
+        String realName = null;
+        int loginType = TradeUser.getInstance().getLoginType();
+        if (loginType == 1) {
+            realName = TradeUser.getInstance().getRealName() + "";
+        }
+        return realName;
+    }
+
+    /**
+     * JLP_ANDROID 金罗盘Android版
+     * 
+     * @return 进行分析的系统编码
+     */
+    public static String setSystemCode() {
+        return Gloable.getInstance().getSysCode();
+    }
+
+    /**
+     * 1.0
+     * 
+     * @return 进行分析的系统版本
+     */
+    public static String setSystemVer() {
+        // 1.0
+        return Gloable.getInstance().getSysVer();
+    }
+
+    /**
+     * 32+4位长度的唯一值
+     * 
+     * @return 此次回话的ID
+     */
+    public static String setSessionId() {
+        return Gloable.getInstance().getSessionid();
+    }
+
+    /**
+     * 非Web应用传值：1
+     * 
+     * @return 页面点击数
+     */
+    public static String setHits() {
+        return Gloable.getInstance().getHits()+"";
+    }
+
+    /**
+     * 此次访问的操作类型。 1: 更新状态 0: 新增
+     * 
+     * @return 此次访问的操作类型
+     */
+    public static String setOpera() {
+        return Gloable.getInstance().getOpera();
+    }
+
+    /**
+     * HTC Desire 等等
+     * 
+     * @return 访问终端类型
+     */
+    public static String setTerminaltype() {
+        return Gloable.getInstance().getTermianl();
+    }
+
+    /**
+     * 同浏览用户的custID值。
+     * 
+     * @return 标示浏览用户身份的ID
+     */
+    public static String setVisitorID() {
+        return Gloable.getInstance().getIMEI();
+    }
+
+    /**
+     * 当前操作系统版本
+     * 
+     * @return 操作系统及版本
+     */
+    public static String setOS() {
+        // android2.3.3
+        return Gloable.getInstance().getOs();
+    }
+
+    /**
+     * 当手机使用非wifi方式上网时，可获取网络运营商。如： 中国移动、中国联通、中国电信等
+     * 
+     * @return 网络运营商
+     * 
+     */
+    public static String setISP() {
+        return Gloable.getInstance().getIsp();
+    }
+
+    /**
+     * WI-FI EDGE/3G
+     * 
+     * @return 联网方式
+     */
+    public static String setNetworkType() {
+        return Gloable.getInstance().getNetType();
+    }
+
+    /**
+     * 形如：1440*900
+     * 
+     * @return 客户端分辨率
+     */
+    public static String setResolu() {
+
+        return Gloable.getInstance().getReso();
+    }
+
+    /**
+     * @return 客户端语言
+     */
+    public static String setOSCharacter() {
+
+        return Gloable.getInstance().getOschar();
+    }
+
+    /**
+     * 应用发布来源
+     * 
+     * @return APK获取来源;
+     */
+    public static String setChannel() {
+
+        return "Google Market";
+    }
+
+    public static String setLastUID() {
+        return matchUID(Gloable.getInstance().getLastUid());
+    }
+
+    private static String matchUID(String classname) {
+        String urlID = null;
         if (classname.equals(".MainActivity")) {
             urlID = "njzq_main";
         } else if (classname.equals(".JlpActivity")) {
@@ -124,7 +328,7 @@ public class UrlParams {
             urlID = "njzq_";
         } else if (classname.equals("com.cssweb.android.quote.FundQuery")) {
             urlID = "njzq_";
-        } else if (classname.equals("com.cssweb.android.quote.SunPrivate")) {
+        } else if (classname.equals("com.cssweb.android.quote.Sunpublic")) {
             urlID = "njzq_";
         } else if (classname.equals("com.cssweb.android.quote.JingZhiQuery")) {
             urlID = "njzq_";
@@ -141,7 +345,7 @@ public class UrlParams {
         } else if (classname.equals("com.cssweb.android.quote.GlobalHuiShi")) {
             urlID = "njzq_";
         } else if (classname
-                .equals("com.cssweb.android.quote.SunPrivateQueryCondition")) {
+                .equals("com.cssweb.android.quote.SunpublicQueryCondition")) {
             urlID = "njzq_";
         } else if (classname.equals("com.cssweb.android.web.OpenHrefDisplay")) {
             urlID = "njzq_";
@@ -314,225 +518,6 @@ public class UrlParams {
         }
 
         return urlID;
-    }
 
-    /**
-     * 用户登陆后可能有的数据(交易用户)
-     * 
-     * @return 营业部编码
-     */
-    @SuppressWarnings("unused")
-    private static String setOrgID() {
-        String orgID = null;
-        int loginType = TradeUser.getInstance().getLoginType();
-        System.out.println(loginType);
-        if (loginType == 1) {
-            orgID = TradeUser.getInstance().getOrgid();
-
-        } else {
-            orgID = null;
-        }
-        return orgID;
-    }
-
-    /**
-     * @return 营业部名称
-     */
-    @SuppressWarnings("unused")
-    private static String setOrgDesc() {
-        String orgDesc = null;
-        int loginType = TradeUser.getInstance().getLoginType();
-        System.out.println(loginType);
-        if (loginType == 1) {
-            orgDesc = TradeUser.getInstance().getOrgName();
-        } else {
-            orgDesc = null;
-        }
-        return orgDesc;
-    }
-
-    /**
-     * 1：交易用户 2：体验用户 3：浏览用户 4：注册用户
-     * 
-     * @return 用户类型
-     */
-    @SuppressWarnings("unused")
-    private static String setUserType() {
-        String userType = null;
-        int loginType = TradeUser.getInstance().getLoginType();
-        if (loginType == 0) {// 浏览
-            userType = "3";
-        } else if (loginType == 1) {// 交易
-            userType = "1";
-        } else if (loginType == 3) {// 体验
-            userType = "2";
-        } else if (loginType == 4) {// 注册
-            userType = "4";
-        }
-        return userType;
-    }
-
-    /**
-     * @return 用户等级
-     */
-    @SuppressWarnings("unused")
-    private static String setUserLevel() {
-        String userLevel = null;
-        int loginType = TradeUser.getInstance().getLoginType();
-        if (loginType == 1 || loginType == 3) {
-            userLevel = TradeUser.getInstance().getUserLevel() + "";
-        }
-        return userLevel;
-    }
-
-    /**
-     * @return 真实姓名
-     */
-    @SuppressWarnings("unused")
-    private static String setRealName() {
-        String realName = null;
-        int loginType = TradeUser.getInstance().getLoginType();
-        if (loginType == 1) {
-            realName = TradeUser.getInstance().getUserLevel() + "";
-        }
-        return realName;
-    }
-
-    /**
-     * JLP_ANDROID 金罗盘Android版
-     * 
-     * @return 进行分析的系统编码
-     */
-    @SuppressWarnings("unused")
-    private static String setSystemCode() {
-        return Gloable.getInstance().getSysCode();
-    }
-
-    /**
-     * 1.0
-     * 
-     * @return 进行分析的系统版本
-     */
-    @SuppressWarnings("unused")
-    private static String setSystemVer() {
-        // 1.0
-        return Gloable.getInstance().getSysVer();
-    }
-
-    /**
-     * 32+4位长度的唯一值
-     * 
-     * @return 此次回话的ID
-     */
-    @SuppressWarnings("unused")
-    private static String setSessionId() {
-        return Gloable.getInstance().getSessionid();
-    }
-
-    /**
-     * 非Web应用传值：1
-     * 
-     * @return 页面点击数
-     */
-    @SuppressWarnings("unused")
-    private static String setHits() {
-        return null;
-    }
-
-    /**
-     * 此次访问的操作类型。 1: 更新状态 0: 新增
-     * 
-     * @return 此次访问的操作类型
-     */
-    @SuppressWarnings("unused")
-    private static String setOpera() {
-        return null;
-    }
-
-    // private static String setKey() {
-    // return null;
-    // }
-
-    /**
-     * HTC Desire 等等
-     * 
-     * @return 访问终端类型
-     */
-    @SuppressWarnings("unused")
-    private static String setTerminaltype() {
-        return Gloable.getInstance().getTermianl();
-    }
-
-    /**
-     * 同浏览用户的custID值。
-     * 
-     * @return 标示浏览用户身份的ID
-     */
-    @SuppressWarnings("unused")
-    private static String setVisitorID() {
-        return Gloable.getInstance().getIMEI();
-    }
-
-    /**
-     * 当前操作系统版本
-     * 
-     * @return 操作系统及版本
-     */
-    @SuppressWarnings("unused")
-    private static String setOS() {
-        // android2.3.3
-        return Gloable.getInstance().getOs();
-    }
-
-    /**
-     * 当手机使用非wifi方式上网时，可获取网络运营商。如： 中国移动、中国联通、中国电信等
-     * 
-     * @return 网络运营商
-     * 
-     */
-    @SuppressWarnings("unused")
-    private static String setISP() {
-        return Gloable.getInstance().getIsp();
-    }
-
-    /**
-     * WI-FI EDGE/3G
-     * 
-     * @return 联网方式
-     */
-    @SuppressWarnings("unused")
-    private static String setNetworkType() {
-        return Gloable.getInstance().getNetType();
-    }
-
-    /**
-     * 形如：1440*900
-     * 
-     * @return 客户端分辨率
-     */
-    @SuppressWarnings("unused")
-    private static String setResolu() {
-
-        return Gloable.getInstance().getReso();
-    }
-
-    /**
-     * @return 客户端语言
-     */
-    @SuppressWarnings("unused")
-    private static String setOSCharacter() {
-
-        return Gloable.getInstance().getOschar();
-    }
-
-    /**
-     * 应用发布来源
-     * 
-     * @return APK获取来源;
-     */
-    @SuppressWarnings("unused")
-    private static String setChannel() {
-
-        return "Google Market";
     }
 }

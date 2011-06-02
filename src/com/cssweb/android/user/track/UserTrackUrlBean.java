@@ -66,7 +66,7 @@ public class UserTrackUrlBean {
                 + "systemCode=" + this.systemCode + "&" + "systemVer="
                 + this.systemVer + "&" + "sessionID=" + this.sessionId + "&"
                 + "hits=" + this.hits + "&" + "opera=" + this.opera + "&"
-                +  "&" + "terminatype" + this.terminaltype
+                +  "&" + "terminatype=" + this.terminaltype
                 + "&" + "visitorID=" + this.visitorID + "&" + "oS=" + this.oS
                 + "&" + "iSP=" + this.iSP + "&" + "networkType="
                 + this.networkType + "&" + "resolu=" + this.resolu + "&"

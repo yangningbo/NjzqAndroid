@@ -1,7 +1,6 @@
 package com.cssweb.android.main;
 
 import java.util.Locale;
-import java.util.UUID;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -168,15 +167,14 @@ public class MainActivity extends BaseActivity implements SensorEventListener {
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         gloable.setReso(dm.widthPixels + " * " + dm.heightPixels);
-        gloable.setSessionid(UUID.randomUUID().toString());
         gloable.setSysCode("JLP_ANDROID");
         gloable.setSysVer("1.0");
         gloable.setTermianl(android.os.Build.MODEL);
+        gloable.setHits(1);
         String nettype = null;
         ConnectivityManager connectivityManager = (ConnectivityManager) this
                 .getSystemService(Context.CONNECTIVITY_SERVICE);// 获取系统的连接服务
         NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();// 获取网络的连接情况
-        System.out.println(activeNetInfo.getType());
         if (activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) {
             System.out.println("wifi");
             nettype = "wifi";
