@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 import com.cssweb.android.common.Base64Encoder;
 import com.cssweb.android.connect.Conn;
+import com.cssweb.android.session.TradeUser;
 
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -50,6 +51,7 @@ public class HandleActivity {
                 pushStack();
                 if (compareStack()) {
                     System.out.println("do nothing");
+                    System.out.println("logintype"+TradeUser.getInstance().getLoginType());
                 } else {
                     System.out.println("send url");
                     sendUrl();
@@ -68,17 +70,17 @@ public class HandleActivity {
                 // i.setComponent(activityStack.peek());
                 // context.startActivity(i);
                 // String url=context.//获取context的参数
-                handleUrlData();
-                System.out.println(url);
-                if (url != null) {
-                    jsobString = Conn.execute(url).toString();
-                    System.out.println(jsobString);
-                    /*
-                     * 返回
-                     * {"cssweb_code":"success","cssweb_type":"track","key":
-                     * "24.RENEW.BS-20110601-13","cssweb_msg":""}
-                     */
-                }
+  //=============>              handleUrlData();
+//                System.out.println(url);
+//                if (url != null) {
+//                    jsobString = Conn.execute(url).toString();
+//                    System.out.println(jsobString);
+//                    /*
+//                     * 返回
+//                     * {"cssweb_code":"success","cssweb_type":"track","key":
+//                     * "24.RENEW.BS-20110601-13","cssweb_msg":""}
+//                     */
+//                }
 
             }
 

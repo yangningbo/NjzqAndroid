@@ -1,5 +1,8 @@
 package com.cssweb.android.main;
 
+import java.util.Locale;
+import java.util.UUID;
+
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -12,7 +15,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -31,6 +37,7 @@ import com.cssweb.android.base.BaseActivity;
 import com.cssweb.android.common.FairyUI;
 import com.cssweb.android.common.Global;
 import com.cssweb.android.session.TradeUser;
+import com.cssweb.android.user.track.Gloable;
 import com.cssweb.android.user.track.TrackService;
 import com.cssweb.android.util.ActivityUtil;
 import com.cssweb.android.util.CssSystem;
@@ -60,7 +67,7 @@ public class MainActivity extends BaseActivity implements SensorEventListener {
 
     private boolean firstTouchFlag = true;
 
-
+    private Gloable gloable;
 
     // private PowerManager mPowerManager; //电源控制，比如防锁屏
     // private WakeLock mWakeLock;
@@ -102,35 +109,84 @@ public class MainActivity extends BaseActivity implements SensorEventListener {
         // getClass()
         // .getName()); //处理屏幕防止锁屏
 
-            Intent testIntent = new Intent(MainActivity.this,
-                    TrackService.class);
-//            bindService(testIntent, mConnection, Context.BIND_AUTO_CREATE);
-            startService(testIntent);
+        Intent testIntent = new Intent(MainActivity.this, TrackService.class);
+        // bindService(testIntent, mConnection, Context.BIND_AUTO_CREATE);
+        startService(testIntent);
+        setGlobalParams();
 
     }
 
-//    private ServiceConnection mConnection = new ServiceConnection() {
-//        public void onServiceConnected(ComponentName className, IBinder service) {
-//            System.out
-//                    .println(this.getClass().getName()
-//                            + "."
-//                            + new Exception().getStackTrace()[0]
-//                                    .getMethodName()
-//                    + "()");
-//            mBoundService = ((TrackService.TrackBinder) service).getService();
-//
-//        }
-//
-//        public void onServiceDisconnected(ComponentName className) {
-//            System.out
-//            .println(this.getClass().getName()
-//                    + "."
-//                    + new Exception().getStackTrace()[0]
-//                            .getMethodName()
-//            + "()");
-//            mBoundService = null;
-//        }
-//    };
+    // private ServiceConnection mConnection = new ServiceConnection() {
+    // public void onServiceConnected(ComponentName className, IBinder service)
+    // {
+    // System.out
+    // .println(this.getClass().getName()
+    // + "."
+    // + new Exception().getStackTrace()[0]
+    // .getMethodName()
+    // + "()");
+    // mBoundService = ((TrackService.TrackBinder) service).getService();
+    //
+    // }
+    //
+    // public void onServiceDisconnected(ComponentName className) {
+    // System.out
+    // .println(this.getClass().getName()
+    // + "."
+    // + new Exception().getStackTrace()[0]
+    // .getMethodName()
+    // + "()");
+    // mBoundService = null;
+    // }
+    // };
+
+    /**
+     * 行为分析固定参数,只执行一次 IMEI,ISP,android版本,系统编码,语言,分辨率,sessionid,软件版本,手机信号
+     */
+    private void setGlobalParams() {
+        gloable = Gloable.getInstance();
+        TelephonyManager telmanager = (TelephonyManager) this
+                .getSystemService(Context.TELEPHONY_SERVICE);
+        gloable.setIMEI(telmanager.getDeviceId());
+        String isp = null;
+        String opera = telmanager.getSimOperator();
+        if (opera != null) {// 网络运营商
+            if (opera.equals("46000") || opera.equals("46002")) {
+                System.out.println("中国移动");
+                isp = "中国移动";
+            } else if (opera.equals("46001")) {
+                System.out.println("中国联通");
+                isp = "中国联通";
+            } else if (opera.equals("46003")) {
+                System.out.println("中国电信");
+                isp = "中国电信";
+            }
+        }
+        gloable.setIsp(isp);
+        gloable.setOs("android" + android.os.Build.VERSION.RELEASE);
+        gloable.setOschar(Locale.getDefault().getDisplayName());
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        gloable.setReso(dm.widthPixels + " * " + dm.heightPixels);
+        gloable.setSessionid(UUID.randomUUID().toString());
+        gloable.setSysCode("JLP_ANDROID");
+        gloable.setSysVer("1.0");
+        gloable.setTermianl(android.os.Build.MODEL);
+        String nettype = null;
+        ConnectivityManager connectivityManager = (ConnectivityManager) this
+                .getSystemService(Context.CONNECTIVITY_SERVICE);// 获取系统的连接服务
+        NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();// 获取网络的连接情况
+        System.out.println(activeNetInfo.getType());
+        if (activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+            System.out.println("wifi");
+            nettype = "wifi";
+        } else if (activeNetInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+            System.out.println("3g");
+            nettype = "EDGE/3G";
+        }
+        gloable.setNetType(nettype);// 上网方式
+
+    }
 
     private void initBottomBtn() {
         int loginType = TradeUser.getInstance().getLoginType();
@@ -293,7 +349,7 @@ public class MainActivity extends BaseActivity implements SensorEventListener {
     public void onExit() {
         String fundid = TradeUser.getInstance().getFundid();
         if (fundid == null || fundid.equals("")) {
-        
+
             showDialog(2);
         } else {
             showDialog(1);
@@ -457,21 +513,19 @@ public class MainActivity extends BaseActivity implements SensorEventListener {
         int version = CssSystem.getSDKVersionNumber();
         ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         if (version < 8) {// 2.2以下版本
-//            if (mIsBound) {
-//                unbindService(mConnection);
-//                mIsBound = false;
-//            }
-            stopService(new Intent(MainActivity.this,
-                    TrackService.class));
+            // if (mIsBound) {
+            // unbindService(mConnection);
+            // mIsBound = false;
+            // }
+            stopService(new Intent(MainActivity.this, TrackService.class));
             manager.restartPackage(getPackageName());
         } else {
-//            if (mIsBound) {
-//                unbindService(mConnection);
-//                mIsBound = false;
-//            }
+            // if (mIsBound) {
+            // unbindService(mConnection);
+            // mIsBound = false;
+            // }
             // manager.killBackgroundProcesses(getPackageName());
-            stopService(new Intent(MainActivity.this,
-                    TrackService.class));
+            stopService(new Intent(MainActivity.this, TrackService.class));
             System.exit(0);
         }
     }

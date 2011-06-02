@@ -4,31 +4,39 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 
+import com.cssweb.android.session.TradeUser;
+
 public class UrlParams {
     private static Context context;
+
+    static {
+        context = CssApplication.getInstance();
+    }
 
     /**
      * 客户代码。交易用户，传值：客户号（不支持客户号，传资金帐号）  体验用户，传值：体验卡号  浏览用户，传值：唯一值 
      * 注册用户，传值：用户ID或其它唯一标识符（比如：昵称）  内部用户，传值：员工号
      * 
-     * 注： 浏览用户客户代码：  移动终端使用设备编号；
+     * 注： 浏览用户客户代码：  移动终端使用设备编号； //1 交易密码登陆 ,2服务密码登陆 ,3体验卡登陆 ,4 注册用户（模拟炒股专用）
      * 
      * @return 客户代码
      */
     @SuppressWarnings("unused")
     private static String setCustID() {
+        System.out.println(new Exception().getStackTrace()[0].getMethodName()
+                + "()");
         String cusid = null;
-        // if(//浏览用户) {
-        // cusid=//获取设备编号
-        // }else if(交易用户) {
-        // cusid=//客户号
-        // }else if(体验用户) {
-        // cusid= //体验卡号
-        // }else if(注册用户) {
-        // cusid=//用户ID
-        // }else if(内部用户) {
-        // cusid=//员工号
-        // }
+        int loginType = TradeUser.getInstance().getLoginType();
+        System.out.println(loginType);
+        if (loginType == 0) {// 浏览
+            cusid = Gloable.getInstance().getIMEI();
+        } else if (loginType == 1) {// 交易
+            cusid = TradeUser.getInstance().getCustid();
+        } else if (loginType == 3) {// 体验
+            cusid = TradeUser.getInstance().getCustid(); // 体验卡号
+        } else if (loginType == 4) {// 注册
+            cusid = TradeUser.getInstance().getCustid();
+        }
         return cusid;
     }
 
@@ -315,7 +323,16 @@ public class UrlParams {
      */
     @SuppressWarnings("unused")
     private static String setOrgID() {
-        return null;
+        String orgID = null;
+        int loginType = TradeUser.getInstance().getLoginType();
+        System.out.println(loginType);
+        if (loginType == 1) {
+            orgID = TradeUser.getInstance().getOrgid();
+
+        } else {
+            orgID = null;
+        }
+        return orgID;
     }
 
     /**
@@ -323,17 +340,36 @@ public class UrlParams {
      */
     @SuppressWarnings("unused")
     private static String setOrgDesc() {
-        return null;
+        String orgDesc = null;
+        int loginType = TradeUser.getInstance().getLoginType();
+        System.out.println(loginType);
+        if (loginType == 1) {
+            orgDesc = TradeUser.getInstance().getOrgName();
+        } else {
+            orgDesc = null;
+        }
+        return orgDesc;
     }
 
     /**
-     * 1：交易用户 2：体验用户 3：浏览用户 4：注册用户 5：内部用户
+     * 1：交易用户 2：体验用户 3：浏览用户 4：注册用户
      * 
      * @return 用户类型
      */
     @SuppressWarnings("unused")
     private static String setUserType() {
-        return null;
+        String userType = null;
+        int loginType = TradeUser.getInstance().getLoginType();
+        if (loginType == 0) {// 浏览
+            userType = "3";
+        } else if (loginType == 1) {// 交易
+            userType = "1";
+        } else if (loginType == 3) {// 体验
+            userType = "2";
+        } else if (loginType == 4) {// 注册
+            userType = "4";
+        }
+        return userType;
     }
 
     /**
@@ -341,7 +377,12 @@ public class UrlParams {
      */
     @SuppressWarnings("unused")
     private static String setUserLevel() {
-        return null;
+        String userLevel = null;
+        int loginType = TradeUser.getInstance().getLoginType();
+        if (loginType == 1 || loginType == 3) {
+            userLevel = TradeUser.getInstance().getUserLevel() + "";
+        }
+        return userLevel;
     }
 
     /**
@@ -349,7 +390,12 @@ public class UrlParams {
      */
     @SuppressWarnings("unused")
     private static String setRealName() {
-        return null;
+        String realName = null;
+        int loginType = TradeUser.getInstance().getLoginType();
+        if (loginType == 1) {
+            realName = TradeUser.getInstance().getUserLevel() + "";
+        }
+        return realName;
     }
 
     /**
@@ -359,7 +405,7 @@ public class UrlParams {
      */
     @SuppressWarnings("unused")
     private static String setSystemCode() {
-        return null;
+        return Gloable.getInstance().getSysCode();
     }
 
     /**
@@ -369,17 +415,18 @@ public class UrlParams {
      */
     @SuppressWarnings("unused")
     private static String setSystemVer() {
-        return null;
+        // 1.0
+        return Gloable.getInstance().getSysVer();
     }
 
     /**
-     * 64位长度的唯一值
+     * 32+4位长度的唯一值
      * 
      * @return 此次回话的ID
      */
     @SuppressWarnings("unused")
     private static String setSessionId() {
-        return null;
+        return Gloable.getInstance().getSessionid();
     }
 
     /**
@@ -413,7 +460,7 @@ public class UrlParams {
      */
     @SuppressWarnings("unused")
     private static String setTerminaltype() {
-        return null;
+        return Gloable.getInstance().getTermianl();
     }
 
     /**
@@ -423,7 +470,7 @@ public class UrlParams {
      */
     @SuppressWarnings("unused")
     private static String setVisitorID() {
-        return null;
+        return Gloable.getInstance().getIMEI();
     }
 
     /**
@@ -433,7 +480,8 @@ public class UrlParams {
      */
     @SuppressWarnings("unused")
     private static String setOS() {
-        return null;
+        // android2.3.3
+        return Gloable.getInstance().getOs();
     }
 
     /**
@@ -444,7 +492,7 @@ public class UrlParams {
      */
     @SuppressWarnings("unused")
     private static String setISP() {
-        return null;
+        return Gloable.getInstance().getIsp();
     }
 
     /**
@@ -454,7 +502,7 @@ public class UrlParams {
      */
     @SuppressWarnings("unused")
     private static String setNetworkType() {
-        return null;
+        return Gloable.getInstance().getNetType();
     }
 
     /**
@@ -464,7 +512,8 @@ public class UrlParams {
      */
     @SuppressWarnings("unused")
     private static String setResolu() {
-        return null;
+
+        return Gloable.getInstance().getReso();
     }
 
     /**
@@ -473,7 +522,7 @@ public class UrlParams {
     @SuppressWarnings("unused")
     private static String setOSCharacter() {
 
-        return null;
+        return Gloable.getInstance().getOschar();
     }
 
     /**
@@ -486,10 +535,4 @@ public class UrlParams {
 
         return "Google Market";
     }
-    // private static String set() {
-    // return null;
-    // }
-    // private static String set() {
-    // return null;
-    // }
 }
