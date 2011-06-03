@@ -22,17 +22,25 @@ public class UrlParams {
      * @return 客户代码
      */
     public static String setCustID() {
+       System.out.println( new Exception().getStackTrace()[0].getMethodName()+ "()");
         String cusid = "";
         int loginType = TradeUser.getInstance().getLoginType();
-        // System.out.println(loginType);
-        if (loginType == 0) {// 浏览
+        System.out.println("logintype===>"+loginType);
+        if (loginType == 0) {// 浏览0
+            System.out.println("浏览用户=====0");
             cusid = Gloable.getInstance().getIMEI();
         } else if (loginType == 1) {// 交易
+            System.out.println("交易用户=====1");
             cusid = TradeUser.getInstance().getCustid();
         } else if (loginType == 3) {// 体验
+            System.out.println(" 体验用户====3");
             cusid = TradeUser.getInstance().getCustid(); // 体验卡号
         } else if (loginType == 4) {// 注册
+            System.out.println("注册用户=====4");
             cusid = TradeUser.getInstance().getCustid();
+        }
+        if (cusid == null) {
+            cusid = "";
         }
         return cusid;
     }
@@ -65,6 +73,9 @@ public class UrlParams {
             orgID = TradeUser.getInstance().getOrgid();
 
         } else {
+            orgID = "";
+        }
+        if (orgID == null) {
             orgID = "";
         }
         return orgID;
@@ -115,7 +126,6 @@ public class UrlParams {
         if (loginType == 1 || loginType == 3) {
             userLevel = TradeUser.getInstance().getUserLevel() + "";
         }
-
         return userLevel;
     }
 
@@ -130,6 +140,7 @@ public class UrlParams {
         } else {
             realName = "";
         }
+        
         return realName;
     }
 

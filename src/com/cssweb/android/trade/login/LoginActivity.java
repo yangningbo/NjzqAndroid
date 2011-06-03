@@ -707,7 +707,7 @@ public class LoginActivity extends CssBaseActivity {
 						}
 						//设置用户类型
 						TradeUser.getInstance().setUserType("serv");
-						TradeUser.getInstance().setLoginType(18);
+						TradeUser.getInstance().setLoginType(2);
 						TradeUser.getInstance().setCustid(loginFundid);
 						TradeUser.getInstance().setFundid(loginFundid);
 						
@@ -796,7 +796,7 @@ public class LoginActivity extends CssBaseActivity {
 					}
 					//设置用户类型
 					TradeUser.getInstance().setUserType("serv");
-					TradeUser.getInstance().setLoginType(19);
+					TradeUser.getInstance().setLoginType(1);
 					
 					//getFundList();
 					getStockAccountList();
