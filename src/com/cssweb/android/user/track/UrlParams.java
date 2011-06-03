@@ -11,6 +11,7 @@ public class UrlParams {
 
     static {
         context = CssApplication.getInstance();
+
     }
 
     /**
@@ -22,14 +23,15 @@ public class UrlParams {
      * @return 客户代码
      */
     public static String setCustID() {
-       System.out.println( new Exception().getStackTrace()[0].getMethodName()+ "()");
+//        System.out.println(new Exception().getStackTrace()[0].getMethodName()
+//                + "()");
         String cusid = "";
         int loginType = TradeUser.getInstance().getLoginType();
-        System.out.println("logintype===>"+loginType);
+        System.out.println("logintype===>" + loginType);
         if (loginType == 0) {// 浏览0
             System.out.println("浏览用户=====0");
             cusid = Gloable.getInstance().getIMEI();
-        } else if (loginType == 1) {// 交易
+        } else if (loginType == 1 || loginType == 2) {// 交易
             System.out.println("交易用户=====1");
             cusid = TradeUser.getInstance().getCustid();
         } else if (loginType == 3) {// 体验
@@ -69,7 +71,7 @@ public class UrlParams {
         String orgID = "";
         int loginType = TradeUser.getInstance().getLoginType();
         // System.out.println(loginType);
-        if (loginType == 1) {
+        if (loginType == 1 || loginType == 2) {
             orgID = TradeUser.getInstance().getOrgid();
 
         } else {
@@ -88,7 +90,7 @@ public class UrlParams {
         String orgDesc = "";
         int loginType = TradeUser.getInstance().getLoginType();
         // System.out.println(loginType);
-        if (loginType == 1) {
+        if (loginType == 1 || loginType == 2) {
             orgDesc = TradeUser.getInstance().getOrgName();
         } else {
             orgDesc = "";
@@ -107,7 +109,7 @@ public class UrlParams {
         int loginType = TradeUser.getInstance().getLoginType();
         if (loginType == 0) {// 浏览
             userType = "3";
-        } else if (loginType == 1) {// 交易
+        } else if (loginType == 1 || loginType == 2) {// 交易
             userType = "1";
         } else if (loginType == 3) {// 体验
             userType = "2";
@@ -123,7 +125,7 @@ public class UrlParams {
     public static String setUserLevel() {
         String userLevel = "";
         int loginType = TradeUser.getInstance().getLoginType();
-        if (loginType == 1 || loginType == 3) {
+        if (loginType == 1 || loginType == 3 || loginType == 2) {
             userLevel = TradeUser.getInstance().getUserLevel() + "";
         }
         return userLevel;
@@ -135,12 +137,12 @@ public class UrlParams {
     public static String setRealName() {
         String realName = "";
         int loginType = TradeUser.getInstance().getLoginType();
-        if (loginType == 1) {
+        if (loginType == 1 || loginType == 2) {
             realName = TradeUser.getInstance().getRealName() + "";
         } else {
             realName = "";
         }
-        
+
         return realName;
     }
 
@@ -253,6 +255,19 @@ public class UrlParams {
     public static String setOSCharacter() {
 
         return Gloable.getInstance().getOschar();
+    }
+
+    /**
+     * @return 服务器端唯一标识
+     */
+    public static String setKey() {
+        String key = "";
+        if(Gloable.getInstance().getKey()!=null) {
+            key=Gloable.getInstance().getKey();
+        }
+
+        return key;
+
     }
 
     /**

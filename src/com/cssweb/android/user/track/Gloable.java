@@ -28,6 +28,8 @@ public class Gloable {
     private String lastUid;//上一个栏目地址
     
     private String Opera;// * 此次访问的操作类型。 1: 更新状态 0: 新增
+    private String key;// 服务器端的唯一标识符
+    private String jsonString;//服务器返回的jsonString
 
     private static Gloable INSTANCE = null;
 
@@ -141,6 +143,22 @@ public class Gloable {
 
     public String getOpera() {
         return Opera;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setJsonString(String jsonString) {
+        this.jsonString = jsonString;
+    }
+
+    public String getJsonString() {
+        return jsonString;
     }
 
 }

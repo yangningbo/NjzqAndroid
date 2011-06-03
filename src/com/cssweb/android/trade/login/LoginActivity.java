@@ -58,6 +58,7 @@ import com.cssweb.android.session.TradeUser;
 import com.cssweb.android.share.StockPreference;
 import com.cssweb.android.trade.util.TradeUtil;
 import com.cssweb.android.user.track.TrackLoginReceiver;
+import com.cssweb.android.user.track.UrlParams;
 import com.cssweb.android.util.ActivityUtil;
 import com.cssweb.android.web.WebViewDisplay;
 
@@ -277,14 +278,13 @@ public class LoginActivity extends CssBaseActivity {
     private void sendBroad() {
         System.out.println(this.getClass().getName() + "::"
                 + new Exception().getStackTrace()[0].getMethodName() + "()");
-        //handlerData();
         Intent intent = new Intent(LoginActivity.this, TrackLoginReceiver.class);
-        // get logininfo
-        // params(loginID,loginType,userType,userLevel,realName,orgID,orgDesc,systemCode,
-        // loginModule,loginState,loginErrorDesc)
-        // loginfo=
-        // Base64(loginID=43231232&loginType=1&orgID=0123&userType=1&realName=张三
-        // &systemCode=WEBSITE&……)
+        LoginInfo.getInstance().setUserLevel(TradeUser.getInstance().getUserLevel()+"");
+//        try {
+//            Thread.sleep(8000);//8秒超时
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         LoginInfo login = LoginInfo.getInstance();
         String logininfo = "loginID=" + login.getLoginID() + "&" + "loginType="
                 + login.getLoginType() + "&" + "userType="
@@ -676,7 +676,7 @@ public class LoginActivity extends CssBaseActivity {
 			    LoginInfo.getInstance().setLoginErrorDesc("");
 				LoginInfo.getInstance().setLoginState("1");
 				//LoginInfo.getInstance().setLoginModule("WTJY");
-				LoginInfo.getInstance().setSystemCode("ANDROID");
+				LoginInfo.getInstance().setSystemCode(UrlParams.setSystemCode());
 				LoginInfo.getInstance().setLoginID(loginFundid);
 				LoginInfo.getInstance().setLoginType("19");
 				LoginInfo.getInstance().setUserType("1");
@@ -726,6 +726,7 @@ public class LoginActivity extends CssBaseActivity {
 							LoginActivity.this.finish();
 						}else {
 							getUserLevel();
+							System.out.println("用户等级"+TradeUser.getInstance().getUserLevel());
 							LoginInfo.getInstance().setUserLevel(String.valueOf(TradeUser.getInstance().getUserLevel()));
 						}
 					}
@@ -801,16 +802,24 @@ public class LoginActivity extends CssBaseActivity {
 					//getFundList();
 					getStockAccountList();
 					getUserLevel();
-					LoginInfo.getInstance().setUserLevel(String.valueOf(TradeUser.getInstance().getUserLevel()));
+					//LoginInfo.getInstance().setUserLevel(String.valueOf(TradeUser.getInstance().getUserLevel()));
 				}
 			}
 		}catch(Exception e){
 			e.printStackTrace();
 			hiddenProgress();
 		}
-		sendBroad();//发送广播到接收器
+
+		
 	}
-//	private void getFundList() {
+@Override
+    protected void onStop() {
+        sendBroad();//发送广播到接收器
+        super.onStop();
+    }
+
+
+    //	private void getFundList() {
 //		new AsyncTask<Void, Void, Boolean>() {
 //			@Override
 //			protected Boolean doInBackground(Void... arg0) {

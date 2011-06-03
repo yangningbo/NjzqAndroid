@@ -5,6 +5,9 @@ import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -37,6 +40,8 @@ public class HandleActivity {
 
     private static String ram;
 
+    private static String key;// 服务器返回key
+
     private static HashMap<String, Integer> hashmap;// 存数栏目访问状态
 
     public static final String TRACKPATH = "http://172.16.1.24:8080/user_track?URL=";
@@ -53,10 +58,12 @@ public class HandleActivity {
                 // 内部线程运行5秒
                 pushStack();
                 if (compareStack()) {
-                    System.out.println("相同,更新状态opera");
+                    System.out.println("相同,更新状态,当前opera==>"
+                            + Gloable.getInstance().getOpera());
                     sendUrl();
                 } else {
-                    System.out.println("不同,发送地址");
+                    System.out.println("不同,发送地址,当前opera==>"
+                            + Gloable.getInstance().getOpera());
 
                     sendUrl();
                 }
@@ -70,14 +77,13 @@ public class HandleActivity {
                 System.out.println(this.getClass().getName() + "."
                         + new Exception().getStackTrace()[0].getMethodName()
                         + "()");
-                // Intent i=new Intent();
-                // i.setComponent(activityStack.peek());
-                // context.startActivity(i);
-                // String url=context.//获取context的参数
                 handleUrlData();
                 if (url != null) {
-                    // System.out.println(url);
-                    jsobString = Conn.execute(url).toString();
+                    System.out.println(new Exception().getStackTrace()[0]
+                            .getMethodName() + "url报错可能=====>" + url);
+                    jsobString = Conn.execute(url) + "";
+                    // Gloable.getInstance().setJsonString(jsobString);
+                    saveKey2Map();
                     System.out.println("服务器返回" + jsobString);
                     /*
                      * 返回 {"cssweb_code":"success","cssweb_type":"track","key":
@@ -119,10 +125,14 @@ public class HandleActivity {
                 // ==&currentURL=aHR0cDovLzU4LjIxMy4xMTMuMTExOjgwMDEvaXBob25lL2hhbGwvb2ZmQW5ub3VuY2VtZW50LmpzcD91YW49d3R5eXRfd3RnZw
                 // ==&ram=3289.107436316079
                 // URL非空
+
                 urlsourcename = UrlParams.setUrlID();
+
+                key = UrlParams.setKey();
                 ram = Math.random() + "";
                 System.out.println("栏目地址==>" + urlBean.toString());
-                System.out.println("当前栏目-->" + urlsourcename);
+                System.out.println("上一个栏目-->" + urlsourcename);
+                System.out.println("key===>" + key);
                 System.out.println("ram ======>" + ram);
 
                 try {
@@ -131,11 +141,10 @@ public class HandleActivity {
                                     .encode(urlBean.toString(), "gb2312")
                             + "&urlSourceName="
                             + Base64Encoder.encode(UrlParams.setLastUID(),
-                                    "gb2312") + "&ram=" + ram;
+                                    "gb2312") + "&key=" + key + "&ram=" + ram;
                 } catch (Exception e) {
                     // TODO: handle exception
                 }
-                System.out.println("usertrack完整地址===>" + url);
                 return url;
 
             }
@@ -170,8 +179,23 @@ public class HandleActivity {
                     if (hashmap.get(classname) != null) {
                         if (hashmap.get(classname) == 0) {
                             Gloable.getInstance().setOpera("0");
-                            hashmap.put(cn.getShortClassName(), 1);
-                        } else if (hashmap.get(classname) == 1) {
+                            try {
+                                if (Gloable.getInstance().getJsonString() != null) {
+                                    JSONObject jb = new JSONObject(Gloable
+                                            .getInstance().getJsonString());
+                                    if (!jb.getString("key").equals("")) {
+                                        Gloable.getInstance().setKey(
+                                                jb.getString("key"));
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            }
+                            // hashmap.put(cn.getShortClassName(), 1);
+                            // 直接把获得的key给进去,根据key有无设置opera
+
+                        } else if (!(hashmap.get(classname).equals("0"))) {
                             Gloable.getInstance().setOpera("1");
                         }
                     }
@@ -227,6 +251,12 @@ public class HandleActivity {
             }
         };
         timer.scheduleAtFixedRate(task, 0, 10000);// 10秒执行一次
+    }
+
+    protected static void saveKey2Map() {
+        if (UserTrackUrlBean.getInstance().getOpera().equals("0")) {
+
+        }
     }
 
     private static void initMap() {

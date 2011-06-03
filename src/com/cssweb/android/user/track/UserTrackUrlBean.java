@@ -25,7 +25,7 @@ public class UserTrackUrlBean {
 
     private String opera;// 此次访问的操作类型
 
-   // private String key;// 服务器端的唯一标识符
+   
 
     private String terminaltype;// 访问终端类型
 
@@ -171,13 +171,6 @@ public class UserTrackUrlBean {
         this.opera = opera;
     }
 
-//    public String getKey() {
-//        return key;
-//    }
-//
-//    public void setKey(String key) {
-//        this.key = key;
-//    }
 
     public String getTerminaltype() {
         return terminaltype;

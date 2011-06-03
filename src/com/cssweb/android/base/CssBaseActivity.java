@@ -374,9 +374,12 @@ public abstract class CssBaseActivity extends BaseActivity {
     }
 	
 	protected void getUserLevel() {
+
 		new AsyncTask<Void, Void, Boolean>() {
 			@Override
 			protected Boolean doInBackground(Void... arg0) {
+			     System.out.println(this.getClass().getName() + "."+ new Exception().getStackTrace()[0].getMethodName()+ "()");
+
 				try {
 					int level = ZixunService.getUserLevel(TradeUser.getInstance().getUserType(), TradeUser.getInstance().getCustid());
 					if(level!=0) {
@@ -388,9 +391,12 @@ public abstract class CssBaseActivity extends BaseActivity {
 				} catch (JSONException e) {
 					return Boolean.FALSE;
 				}
+				System.out.println("用户等级"+TradeUser.getInstance().getUserLevel());
 				return Boolean.TRUE;
 			}
 			protected void onPostExecute(Boolean result) {
+			     System.out.println(this.getClass().getName() + "."+ new Exception().getStackTrace()[0].getMethodName()+ "()");
+
 				if (result != Boolean.TRUE) {
 					ActivityUtil.clearTradeRecord();
 					toast("获取用户等级失败,请重试!");
