@@ -22,11 +22,9 @@ public class UrlParams {
      * @return 客户代码
      */
     public static String setCustID() {
-        System.out.println(new Exception().getStackTrace()[0].getMethodName()
-                + "()");
-        String cusid = null;
+        String cusid = "";
         int loginType = TradeUser.getInstance().getLoginType();
-        System.out.println(loginType);
+        // System.out.println(loginType);
         if (loginType == 0) {// 浏览
             cusid = Gloable.getInstance().getIMEI();
         } else if (loginType == 1) {// 交易
@@ -45,7 +43,7 @@ public class UrlParams {
      * @return 当前访问的栏目代码
      */
     public static String setUrlID() {
-        String classname = null;
+        String classname = "";
         context = CssApplication.getInstance();
         ActivityManager am = (ActivityManager) context
                 .getSystemService(Context.ACTIVITY_SERVICE);
@@ -60,14 +58,14 @@ public class UrlParams {
      * @return 营业部编码
      */
     public static String setOrgID() {
-        String orgID = null;
+        String orgID = "";
         int loginType = TradeUser.getInstance().getLoginType();
-        System.out.println(loginType);
+        // System.out.println(loginType);
         if (loginType == 1) {
             orgID = TradeUser.getInstance().getOrgid();
 
         } else {
-            orgID = null;
+            orgID = "";
         }
         return orgID;
     }
@@ -76,14 +74,15 @@ public class UrlParams {
      * @return 营业部名称
      */
     public static String setOrgDesc() {
-        String orgDesc = null;
+        String orgDesc = "";
         int loginType = TradeUser.getInstance().getLoginType();
-        System.out.println(loginType);
+        // System.out.println(loginType);
         if (loginType == 1) {
             orgDesc = TradeUser.getInstance().getOrgName();
         } else {
-            orgDesc = null;
+            orgDesc = "";
         }
+        orgDesc = "";// /////////写死
         return orgDesc;
     }
 
@@ -93,7 +92,7 @@ public class UrlParams {
      * @return 用户类型
      */
     public static String setUserType() {
-        String userType = null;
+        String userType = "";
         int loginType = TradeUser.getInstance().getLoginType();
         if (loginType == 0) {// 浏览
             userType = "3";
@@ -111,11 +110,12 @@ public class UrlParams {
      * @return 用户等级
      */
     public static String setUserLevel() {
-        String userLevel = null;
+        String userLevel = "";
         int loginType = TradeUser.getInstance().getLoginType();
         if (loginType == 1 || loginType == 3) {
             userLevel = TradeUser.getInstance().getUserLevel() + "";
         }
+
         return userLevel;
     }
 
@@ -123,10 +123,12 @@ public class UrlParams {
      * @return 真实姓名
      */
     public static String setRealName() {
-        String realName = null;
+        String realName = "";
         int loginType = TradeUser.getInstance().getLoginType();
         if (loginType == 1) {
             realName = TradeUser.getInstance().getRealName() + "";
+        } else {
+            realName = "";
         }
         return realName;
     }
@@ -165,7 +167,7 @@ public class UrlParams {
      * @return 页面点击数
      */
     public static String setHits() {
-        return Gloable.getInstance().getHits()+"";
+        return Gloable.getInstance().getHits() + "";
     }
 
     /**
@@ -257,7 +259,7 @@ public class UrlParams {
     }
 
     private static String matchUID(String classname) {
-        String urlID = null;
+        String urlID = "";
         if (classname.equals(".MainActivity")) {
             urlID = "njzq_main";
         } else if (classname.equals(".JlpActivity")) {

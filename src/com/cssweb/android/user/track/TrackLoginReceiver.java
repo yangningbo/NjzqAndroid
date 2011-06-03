@@ -24,6 +24,7 @@ public class TrackLoginReceiver extends BroadcastReceiver {
         String getBroadcastString = (String) bundle.get("key");
         if (!getBroadcastString.equals("loginPressed")) {
             try {
+                System.out.println("登陆地址==>"+getBroadcastString);
                 String base64url = Base64Encoder.encode(getBroadcastString,
                         "gb2312");
                 if (url == null) {

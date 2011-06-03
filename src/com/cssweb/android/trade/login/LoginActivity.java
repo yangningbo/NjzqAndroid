@@ -292,8 +292,7 @@ public class LoginActivity extends CssBaseActivity {
                 + login.getUserLevel() + "&" + "realName="
                 + login.getRealName() + "&" + "orgId=" + login.getOrgID() + "&"
                 + "orgDesc=" + login.getOrgDesc() + "&" + "systemCode="
-                + login.getSystemCode() + "&" + "loginModule="
-                + login.getLoginModule() + "&" + "loginState="
+                + login.getSystemCode() + "&" + "loginState="
                 + login.getLoginState() + "&" + "loginErrorDesc="
                 + login.getLoginErrorDesc();
 	        
@@ -674,11 +673,12 @@ public class LoginActivity extends CssBaseActivity {
 				return;
 			}
 			else {
+			    LoginInfo.getInstance().setLoginErrorDesc("");
 				LoginInfo.getInstance().setLoginState("1");
-				LoginInfo.getInstance().setLoginModule("WTJY");
+				//LoginInfo.getInstance().setLoginModule("WTJY");
 				LoginInfo.getInstance().setSystemCode("ANDROID");
 				LoginInfo.getInstance().setLoginID(loginFundid);
-				LoginInfo.getInstance().setLoginType("1");
+				LoginInfo.getInstance().setLoginType("19");
 				LoginInfo.getInstance().setUserType("1");
 				
 				if (isServicePassword){     //服务密码
@@ -707,7 +707,7 @@ public class LoginActivity extends CssBaseActivity {
 						}
 						//设置用户类型
 						TradeUser.getInstance().setUserType("serv");
-						TradeUser.getInstance().setLoginType(2);
+						TradeUser.getInstance().setLoginType(18);
 						TradeUser.getInstance().setCustid(loginFundid);
 						TradeUser.getInstance().setFundid(loginFundid);
 						
@@ -782,7 +782,8 @@ public class LoginActivity extends CssBaseActivity {
 					//保存用户的客户号
 					if(isSaved)
 					{
-						Boolean sameFlag = true;
+						@SuppressWarnings("unused")
+                        Boolean sameFlag = true;
 						String myFundIdsStr = StockPreference.getCustNo(this);
 						if (myFundIdsStr!=null) {
 							if(myFundIdsStr.indexOf(loginFundid)==-1) {
@@ -795,7 +796,7 @@ public class LoginActivity extends CssBaseActivity {
 					}
 					//设置用户类型
 					TradeUser.getInstance().setUserType("serv");
-					TradeUser.getInstance().setLoginType(1);
+					TradeUser.getInstance().setLoginType(19);
 					
 					//getFundList();
 					getStockAccountList();

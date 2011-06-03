@@ -56,7 +56,7 @@ public class TradeUser {
 
 	//用户类型：交易用户(trade)，浏览用户(anonymous)，体验用户
 	private String userType;
-	//1 交易密码登陆  ,2服务密码登陆 ,3体验卡登陆 ,4 注册用户（模拟炒股专用）
+	//1 交易密码登陆19  ,2服务密码登陆18 ,3体验卡登陆17 ,4 注册用户（模拟炒股专用）
 	private int loginType;
 	private int userLevel;
 	

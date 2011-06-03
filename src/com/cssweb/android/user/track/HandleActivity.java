@@ -11,7 +11,6 @@ import android.content.Context;
 
 import com.cssweb.android.common.Base64Encoder;
 import com.cssweb.android.connect.Conn;
-import com.cssweb.android.session.TradeUser;
 
 /**
  * 用pc模型处理获得的Activity的数据 producer/consumer
@@ -54,11 +53,10 @@ public class HandleActivity {
                 // 内部线程运行5秒
                 pushStack();
                 if (compareStack()) {
-                    System.out.println("do nothing");
-                    System.out.println("logintype"
-                            + TradeUser.getInstance().getLoginType());
+                    System.out.println("相同,更新状态opera");
+                    sendUrl();
                 } else {
-                    System.out.println("send url");
+                    System.out.println("不同,发送地址");
 
                     sendUrl();
                 }
@@ -77,10 +75,10 @@ public class HandleActivity {
                 // context.startActivity(i);
                 // String url=context.//获取context的参数
                 handleUrlData();
-                System.out.println(url);
                 if (url != null) {
+                    // System.out.println(url);
                     jsobString = Conn.execute(url).toString();
-                    System.out.println(jsobString);
+                    System.out.println("服务器返回" + jsobString);
                     /*
                      * 返回 {"cssweb_code":"success","cssweb_type":"track","key":
                      * "24.RENEW.BS-20110601-13","cssweb_msg":""}
@@ -98,7 +96,7 @@ public class HandleActivity {
                 urlBean.setOrgID(UrlParams.setOrgID());// 营业部编码
                 urlBean.setOrgDesc(UrlParams.setOrgDesc());// 营业部名称
                 urlBean.setUserType(UrlParams.setUserType());// 用户类型----------------------
-                urlBean.setUserLevel(UrlParams.setUserType());// 用户等级
+                urlBean.setUserLevel(UrlParams.setUserLevel());// 用户等级
                 urlBean.setRealName(UrlParams.setRealName());// 真实姓名
                 urlBean.setSystemCode(UrlParams.setSystemCode());// 非空,//
                                                                  // 进行分析的系统编码
@@ -131,12 +129,13 @@ public class HandleActivity {
                     url = TRACKPATH
                             + Base64Encoder
                                     .encode(urlBean.toString(), "gb2312")
-                            + "==&urlSourceName="
-                            + Base64Encoder.encode(urlsourcename, "gb2312")
-                            + "==&ram=" + ram;
+                            + "&urlSourceName="
+                            + Base64Encoder.encode(UrlParams.setLastUID(),
+                                    "gb2312") + "&ram=" + ram;
                 } catch (Exception e) {
                     // TODO: handle exception
                 }
+                System.out.println("usertrack完整地址===>" + url);
                 return url;
 
             }
@@ -153,21 +152,21 @@ public class HandleActivity {
                     ActivityManager am = (ActivityManager) context
                             .getSystemService(Context.ACTIVITY_SERVICE);
                     ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
-                    String classname=cn.getShortClassName();
-                    
-                    System.out.println("short name===>查找并更新map==>"
-                            + classname);
-//                    @SuppressWarnings("rawtypes")
-//                    Iterator iter = hashmap.entrySet().iterator(); 
-//                    while (iter.hasNext()) { 
-//                        @SuppressWarnings({ "rawtypes", "unchecked" })
-//                        Map.Entry<String, Integer> entry = (Map.Entry) iter.next(); 
-//                        String key = (String) entry.getKey(); 
-//                        Integer val = (Integer) entry.getValue(); 
-//                        if(cn.getShortClassName().equals(key)) {
-//                            entry.setValue(val+1);
-//                        }
-//                    } 
+                    String classname = cn.getShortClassName();
+
+                    System.out.println("short name===>查找并更新map==>" + classname);
+                    // @SuppressWarnings("rawtypes")
+                    // Iterator iter = hashmap.entrySet().iterator();
+                    // while (iter.hasNext()) {
+                    // @SuppressWarnings({ "rawtypes", "unchecked" })
+                    // Map.Entry<String, Integer> entry = (Map.Entry)
+                    // iter.next();
+                    // String key = (String) entry.getKey();
+                    // Integer val = (Integer) entry.getValue();
+                    // if(cn.getShortClassName().equals(key)) {
+                    // entry.setValue(val+1);
+                    // }
+                    // }
                     if (hashmap.get(classname) != null) {
                         if (hashmap.get(classname) == 0) {
                             Gloable.getInstance().setOpera("0");
@@ -185,6 +184,21 @@ public class HandleActivity {
                 }
 
             }
+
+            // /**
+            // * 是否在线
+            // * @return
+            // */
+            // private boolean isOnline() {
+            // Boolean isonline=false;
+            // if(compareStack()) {
+            // isonline=true;
+            // }
+            // else {
+            // isonline=false;
+            // }
+            // return isonline;
+            // }
 
             /**
              * 比较栈顶
@@ -216,7 +230,7 @@ public class HandleActivity {
     }
 
     private static void initMap() {
-        hashmap=new HashMap<String, Integer>();
+        hashmap = new HashMap<String, Integer>();
         hashmap.put(".MainActivity", 1);
         hashmap.put(".RestartDialog", 0);
         hashmap.put(".TranslucentMenuActivity", 0);
@@ -306,8 +320,11 @@ public class HandleActivity {
         hashmap.put("com.cssweb.android.trade.bank.TransferDateRange", 0);
         hashmap.put("com.cssweb.android.trade.transferFunds.FundsDetails", 0);
         hashmap.put("com.cssweb.android.trade.transferFunds.ZfTransfer", 0);
-        hashmap.put("com.cssweb.android.trade.transferFunds.TransferFundsDateRange", 0);
-        hashmap.put("com.cssweb.android.trade.transferFunds.TransferFundsQuery", 0);
+        hashmap.put(
+                "com.cssweb.android.trade.transferFunds.TransferFundsDateRange",
+                0);
+        hashmap.put(
+                "com.cssweb.android.trade.transferFunds.TransferFundsQuery", 0);
         hashmap.put("com.cssweb.android.trade.stock.ModifyContactInfo", 0);
         hashmap.put("com.cssweb.android.trade.fund.FundTrading", 0);
         hashmap.put("com.cssweb.android.trade.fund.TodayTrust", 0);

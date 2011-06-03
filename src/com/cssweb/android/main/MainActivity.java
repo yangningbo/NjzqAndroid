@@ -147,17 +147,14 @@ public class MainActivity extends BaseActivity implements SensorEventListener {
         TelephonyManager telmanager = (TelephonyManager) this
                 .getSystemService(Context.TELEPHONY_SERVICE);
         gloable.setIMEI(telmanager.getDeviceId());
-        String isp = null;
+        String isp = "";
         String opera = telmanager.getSimOperator();
         if (opera != null) {// 网络运营商
             if (opera.equals("46000") || opera.equals("46002")) {
-                System.out.println("中国移动");
                 isp = "中国移动";
             } else if (opera.equals("46001")) {
-                System.out.println("中国联通");
                 isp = "中国联通";
             } else if (opera.equals("46003")) {
-                System.out.println("中国电信");
                 isp = "中国电信";
             }
         }
@@ -166,20 +163,18 @@ public class MainActivity extends BaseActivity implements SensorEventListener {
         gloable.setOschar(Locale.getDefault().getDisplayName());
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-        gloable.setReso(dm.widthPixels + " * " + dm.heightPixels);
+        gloable.setReso( dm.heightPixels+"*"+dm.widthPixels);
         gloable.setSysCode("JLP_ANDROID");
         gloable.setSysVer("1.0");
         gloable.setTermianl(android.os.Build.MODEL);
         gloable.setHits(1);
-        String nettype = null;
+        String nettype = "";
         ConnectivityManager connectivityManager = (ConnectivityManager) this
                 .getSystemService(Context.CONNECTIVITY_SERVICE);// 获取系统的连接服务
         NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();// 获取网络的连接情况
         if (activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-            System.out.println("wifi");
-            nettype = "wifi";
+            nettype = "WI-FI";
         } else if (activeNetInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
-            System.out.println("3g");
             nettype = "EDGE/3G";
         }
         gloable.setNetType(nettype);// 上网方式
