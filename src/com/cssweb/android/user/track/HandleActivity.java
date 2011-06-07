@@ -44,6 +44,8 @@ public class HandleActivity {
 
     private static HashMap<String, Integer> hashmap;// 存数栏目访问状态
 
+    private static UserTrackUrlBean urlBean;
+
     public static final String TRACKPATH = "http://172.16.1.24:8080/user_track?URL=";
 
     public static void handleStack() {
@@ -78,9 +80,8 @@ public class HandleActivity {
                         + new Exception().getStackTrace()[0].getMethodName()
                         + "()");
                 handleUrlData();
+                // System.out.println(url);
                 if (url != null) {
-                    System.out.println(new Exception().getStackTrace()[0]
-                            .getMethodName() + "url报错可能=====>" + url);
                     jsobString = Conn.execute(url) + "";
                     // Gloable.getInstance().setJsonString(jsobString);
                     saveKey2Map();
@@ -89,13 +90,15 @@ public class HandleActivity {
                      * 返回 {"cssweb_code":"success","cssweb_type":"track","key":
                      * "24.RENEW.BS-20110601-13","cssweb_msg":""}
                      */
+                } else {
+                    System.out.println("发送失败了!");
                 }
 
             }
 
-            private String handleUrlData() {
+            public String handleUrlData() {
 
-                UserTrackUrlBean urlBean = UserTrackUrlBean.getInstance();
+                urlBean = UserTrackUrlBean.getInstance();
 
                 urlBean.setCustID(UrlParams.setCustID());// 客户代码
                 urlBean.setUrlID(UrlParams.setUrlID());// 当前访问的栏目代码
@@ -126,24 +129,21 @@ public class HandleActivity {
                 // ==&ram=3289.107436316079
                 // URL非空
 
-                urlsourcename = UrlParams.setUrlID();
+                urlsourcename = UrlParams.setLastUID();
 
                 key = UrlParams.setKey();
                 ram = Math.random() + "";
-                System.out.println("栏目地址==>" + urlBean.toString());
-                System.out.println("上一个栏目-->" + urlsourcename);
-                System.out.println("key===>" + key);
-                System.out.println("ram ======>" + ram);
-
                 try {
+
                     url = TRACKPATH
                             + Base64Encoder
                                     .encode(urlBean.toString(), "gb2312")
                             + "&urlSourceName="
-                            + Base64Encoder.encode(UrlParams.setLastUID(),
-                                    "gb2312") + "&key=" + key + "&ram=" + ram;
+                            + Base64Encoder.encode(urlsourcename, "gb2312")
+                            + "&key=" + key + "&ram=" + ram;
                 } catch (Exception e) {
-                    // TODO: handle exception
+                    // System.err.println(e);
+                    e.printStackTrace();
                 }
                 return url;
 
@@ -234,7 +234,8 @@ public class HandleActivity {
                         + new Exception().getStackTrace()[0].getMethodName()
                         + "()");
                 if (activityStack.peek().equals(activityStack.get(0))) {
-
+                    Gloable.getInstance().setLastUid(
+                            activityStack.get(0).getShortClassName());
                     activityStack.removeAllElements();// 清空
                     isSame = true;
 

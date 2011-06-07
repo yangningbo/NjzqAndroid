@@ -43,7 +43,7 @@ public class UserTrackUrlBean {
 
     private String channel;// APK获取来源;
 
-    private static UserTrackUrlBean INSTANCE = null;
+    private static UserTrackUrlBean INSTANCE;
 
     public static UserTrackUrlBean getInstance() {
         if (INSTANCE == null) {
