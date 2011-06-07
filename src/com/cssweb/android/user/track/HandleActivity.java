@@ -42,11 +42,12 @@ public class HandleActivity {
 
     private static String key;// 服务器返回key
 
-    private static HashMap<String, Integer> hashmap;// 存数栏目访问状态
+    private static HashMap<String, String> hashmap;// 存数栏目访问状态
 
     private static UserTrackUrlBean urlBean;
 
     public static final String TRACKPATH = "http://172.16.1.24:8080/user_track?URL=";
+    private static String classname;
 
     public static void handleStack() {
         System.out.println("."
@@ -69,7 +70,7 @@ public class HandleActivity {
 
                     sendUrl();
                 }
-
+                System.out.println("======================================一次自动发送结束==========================================================");
             }
 
             /**
@@ -79,13 +80,14 @@ public class HandleActivity {
                 System.out.println(this.getClass().getName() + "."
                         + new Exception().getStackTrace()[0].getMethodName()
                         + "()");
+                System.out.println(hashmap);
                 handleUrlData();
-                // System.out.println(url);
+                System.out.println(" sendUrl==>opera======>"+Gloable.getInstance().getOpera());
+                System.out.println(" sendUrl==>key========>"+Gloable.getInstance().getKey());
                 if (url != null) {
                     jsobString = Conn.execute(url) + "";
-                    // Gloable.getInstance().setJsonString(jsobString);
-                    saveKey2Map();
-                    System.out.println("服务器返回" + jsobString);
+                     Gloable.getInstance().setJsonString(jsobString);
+                    System.out.println("sendUrl===>服务器返回===>" + jsobString);
                     /*
                      * 返回 {"cssweb_code":"success","cssweb_type":"track","key":
                      * "24.RENEW.BS-20110601-13","cssweb_msg":""}
@@ -112,7 +114,12 @@ public class HandleActivity {
                 urlBean.setSystemVer(UrlParams.setSystemVer());// 进行分析的系统版本
                 urlBean.setSessionId(UrlParams.setSessionId());// 此次回话的ID
                 urlBean.setHits(UrlParams.setHits());// 页面点击数
+                
+                
                 urlBean.setOpera(UrlParams.setOpera());// 此次访问的操作类型
+                
+                
+                
                 // urlBean.setKey("23423");// 服务器端的唯一标识符
                 urlBean.setTerminaltype(UrlParams.setTerminaltype());// 访问终端类型----------------
                 urlBean.setVisitorID(UrlParams.setVisitorID());// 标示浏览用户身份的ID
@@ -128,8 +135,11 @@ public class HandleActivity {
                 // ==&currentURL=aHR0cDovLzU4LjIxMy4xMTMuMTExOjgwMDEvaXBob25lL2hhbGwvb2ZmQW5ub3VuY2VtZW50LmpzcD91YW49d3R5eXRfd3RnZw
                 // ==&ram=3289.107436316079
                 // URL非空
-
+                if(Gloable.getInstance().getLastUid()==null) {
+                    urlsourcename=".splash";
+                }else {
                 urlsourcename = UrlParams.setLastUID();
+                }
 
                 key = UrlParams.setKey();
                 ram = Math.random() + "";
@@ -161,45 +171,39 @@ public class HandleActivity {
                     ActivityManager am = (ActivityManager) context
                             .getSystemService(Context.ACTIVITY_SERVICE);
                     ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
-                    String classname = cn.getShortClassName();
+                    classname = cn.getShortClassName();
 
                     System.out.println("short name===>查找并更新map==>" + classname);
-                    // @SuppressWarnings("rawtypes")
-                    // Iterator iter = hashmap.entrySet().iterator();
-                    // while (iter.hasNext()) {
-                    // @SuppressWarnings({ "rawtypes", "unchecked" })
-                    // Map.Entry<String, Integer> entry = (Map.Entry)
-                    // iter.next();
-                    // String key = (String) entry.getKey();
-                    // Integer val = (Integer) entry.getValue();
-                    // if(cn.getShortClassName().equals(key)) {
-                    // entry.setValue(val+1);
-                    // }
-                    // }
-                    if (hashmap.get(classname) != null) {
-                        if (hashmap.get(classname) == 0) {
+//                    if (hashmap.get(classname) != null) {
+//                        if (hashmap.get(classname) == "0") {//第一次检测map的value,如果value="0"发送一次,
+//                            //获取key作为新的value输入map,并把opera设置为"1"
+//                            Gloable.getInstance().setOpera("0");
+//                            getKeyFromServer();
+//                        } else if (!(hashmap.get(classname).equals("0"))) {
+//                            Gloable.getInstance().setOpera("1");
+//                        }
+//                    }
+                    if(hashmap.get(classname)!=null) {
+                        String urlkey="";
+                        if(hashmap.get(classname)=="") {//无key
+                            System.out.println("无key无key无key无key无key无key无key无key无key无key无key无key无key无key无key无key无key无key无key无key无key无key无key无key");
+                            
                             Gloable.getInstance().setOpera("0");
-                            try {
-                                if (Gloable.getInstance().getJsonString() != null) {
-                                    JSONObject jb = new JSONObject(Gloable
-                                            .getInstance().getJsonString());
-                                    if (!jb.getString("key").equals("")) {
-                                        Gloable.getInstance().setKey(
-                                                jb.getString("key"));
-                                    }
-                                }
-                            } catch (JSONException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-                            // hashmap.put(cn.getShortClassName(), 1);
-                            // 直接把获得的key给进去,根据key有无设置opera
-
-                        } else if (!(hashmap.get(classname).equals("0"))) {
+                            Gloable.getInstance().setKey("");
+                            urlkey=getKeyFromServer();
+                            hashmap.put(classname,urlkey);
+                          
+                        }else {//有key
+//                            hashmap.get(classname);
+                            System.out.println("有key有key有key有key有key有key有key有key有key有key有key有key有key有key有key有key有key有key有key有key有key有key有key有key");
+                            Gloable.getInstance().setKey(hashmap.get(classname));
                             Gloable.getInstance().setOpera("1");
                         }
                     }
                     activityStack.push(cn);
+                                                    //这一步单独处理key的问题,先取MAP判断有无对应的key
+                                                    //有则key设为global的key,并且url的opera设置为"1"   ,无:opera设置为"0"发送一次url
+                                                    //
                     try {
                         Thread.sleep(4999);
                     } catch (InterruptedException e) {
@@ -209,20 +213,29 @@ public class HandleActivity {
 
             }
 
-            // /**
-            // * 是否在线
-            // * @return
-            // */
-            // private boolean isOnline() {
-            // Boolean isonline=false;
-            // if(compareStack()) {
-            // isonline=true;
-            // }
-            // else {
-            // isonline=false;
-            // }
-            // return isonline;
-            // }
+
+            private String getKeyFromServer() {
+                System.out.println(this.getClass().getName() + "."
+                        + new Exception().getStackTrace()[0].getMethodName());
+                String urlkeyString="";
+                handleUrlData();
+                
+                sendUrl();
+                try {
+                    if (Gloable.getInstance().getJsonString() != null) {
+                        JSONObject jb = new JSONObject(Gloable.getInstance()
+                                .getJsonString());
+                        if(jb.getString("key")!=null) {
+                        urlkeyString=jb.getString("key");
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("手动发送一次url===>"+"oprea="+Gloable.getInstance().getOpera()+"====="+"UID="+classname+"==="+"key="+Gloable.getInstance().getKey());
+               System.out.println("==============================一次手动发送结束===========================================");
+               return urlkeyString;
+            }
 
             /**
              * 比较栈顶
@@ -254,119 +267,118 @@ public class HandleActivity {
         timer.scheduleAtFixedRate(task, 0, 10000);// 10秒执行一次
     }
 
-    protected static void saveKey2Map() {
-        if (UserTrackUrlBean.getInstance().getOpera().equals("0")) {
 
-        }
-    }
+
 
     private static void initMap() {
-        hashmap = new HashMap<String, Integer>();
-        hashmap.put(".MainActivity", 1);
-        hashmap.put(".RestartDialog", 0);
-        hashmap.put(".TranslucentMenuActivity", 0);
-        hashmap.put("com.cssweb.android.sms.SMSJHActivity", 0);
-        hashmap.put("com.cssweb.android.quote.SQS", 0);
-        hashmap.put("com.cssweb.android.quote.DSS", 0);
-        hashmap.put("com.cssweb.android.quote.ZSS", 0);
-        hashmap.put("com.cssweb.android.quote.ZJS", 0);
-        hashmap.put("com.cssweb.android.quote.QQSP", 0);
-        hashmap.put("com.cssweb.android.quote.QHSCGridActivity", 0);
-        hashmap.put("com.cssweb.android.quote.QHSCBaseActivity", 0);
-        hashmap.put("com.cssweb.android.quote.HSZS", 0);
-        hashmap.put("com.cssweb.android.quote.GlobalMarketActivity", 0);
-        hashmap.put("com.cssweb.android.quote.OTCFundActivity", 0);
-        hashmap.put("com.cssweb.android.quote.PaiMing", 0);
-        hashmap.put("com.cssweb.android.quote.DaPan", 0);
-        hashmap.put("com.cssweb.android.quote.FenLei", 0);
-        hashmap.put("com.cssweb.android.quote.QueryStock", 0);
-        hashmap.put("com.cssweb.android.quote.PersonalStock", 0);
-        hashmap.put("com.cssweb.android.quote.QuoteAlarm", 0);
-        hashmap.put("com.cssweb.android.quote.TrendActivity", 0);
-        hashmap.put("com.cssweb.android.quote.KLineActivity", 0);
-        hashmap.put("com.cssweb.android.quote.KLine2Activity", 0);
-        hashmap.put("com.cssweb.android.quote.QuotePrice", 0);
-        hashmap.put("com.cssweb.android.quote.QuoteDetail", 0);
-        hashmap.put("com.cssweb.android.quote.GetF10List", 0);
-        hashmap.put("com.cssweb.android.quote.GetF10Content", 0);
-        hashmap.put("com.cssweb.android.quote.GlobalMarket", 0);
-        hashmap.put("com.cssweb.android.quote.FLineActivity", 0);
-        hashmap.put("com.cssweb.android.quote.StockTypeFund", 0);
-        hashmap.put("com.cssweb.android.quote.FundQueryCondition", 0);
-        hashmap.put("com.cssweb.android.quote.FundQuery", 0);
-        hashmap.put("com.cssweb.android.quote.Sunpublic", 0);
-        hashmap.put("com.cssweb.android.quote.JingZhiQuery", 0);
-        hashmap.put("com.cssweb.android.quote.QuoteWarning", 0);
-        hashmap.put("com.cssweb.android.quote.QuoteSet", 0);
-        hashmap.put("com.cssweb.android.quote.QHHQActivity", 0);
-        hashmap.put("com.cssweb.android.quote.GGHQActivity", 0);
-        hashmap.put("com.cssweb.android.quote.HKMainboard", 0);
-        hashmap.put("com.cssweb.android.quote.GlobalHuiShi", 0);
-        hashmap.put("com.cssweb.android.quote.SunpublicQueryCondition", 0);
-        hashmap.put("com.cssweb.android.web.OpenHrefDisplay", 0);
-        hashmap.put("com.cssweb.android.web.WebViewDisplay", 0);
-        hashmap.put("com.cssweb.android.web.JxgpcActivity", 0);
-        hashmap.put("com.cssweb.android.web.CfpdActivity", 0);
-        hashmap.put("com.cssweb.android.web.OpenPdfDisplay", 0);
-        hashmap.put("com.cssweb.android.fzjy.VistualTrade", 0);
-        hashmap.put("com.cssweb.android.sz.ClearActivity", 0);
-        hashmap.put("com.cssweb.android.sz.Setting", 0);
-        hashmap.put("com.cssweb.android.sz.HelpActivity", 0);
-        hashmap.put("com.cssweb.android.sz.CustomSettingActivity", 0);
-        hashmap.put("com.cssweb.android.sz.HQRefreshSettingActivity", 0);
-        hashmap.put("com.cssweb.android.sz.ServerSettingActivity", 0);
-        hashmap.put("com.cssweb.android.sz.LockSettingActivity", 0);
-        hashmap.put("com.cssweb.android.tyyh.ExperienceUsers", 0);
-        hashmap.put("com.cssweb.android.video.CustomMediaPlayer", 0);
-        hashmap.put("com.cssweb.android.video.VideoPlayer", 0);
-        hashmap.put("com.cssweb.android.trade.CnjjActivity", 0);
-        hashmap.put("com.cssweb.android.trade.FundActivity", 0);
-        hashmap.put("com.cssweb.android.trade.BankActivity", 0);
-        hashmap.put("com.cssweb.android.trade.TransferFundsActivity", 0);
-        hashmap.put("com.cssweb.android.trade.user.AccountManage", 0);
-        hashmap.put("com.cssweb.android.trade.stock.GetDetails", 0);
-        hashmap.put("com.cssweb.android.trade.stock.GetDetailsH", 0);
-        hashmap.put("com.cssweb.android.trade.stock.StockTrading", 0);
-        hashmap.put("com.cssweb.android.trade.stock.GetPosition", 0);
-        hashmap.put("com.cssweb.android.trade.stock.StockCancel", 0);
-        hashmap.put("com.cssweb.android.trade.stock.AssetQuery", 0);
-        hashmap.put("com.cssweb.android.trade.stock.TodayEntrust", 0);
-        hashmap.put("com.cssweb.android.trade.stock.TodayDeal", 0);
-        hashmap.put("com.cssweb.android.trade.stock.ExchangeFund", 0);
-        hashmap.put("com.cssweb.android.trade.stock.StockWarrant", 0);
-        hashmap.put("com.cssweb.android.trade.stock.StockWarrant", 0);
-        hashmap.put("com.cssweb.android.util.DateRange", 0);
-        hashmap.put("com.cssweb.android.trade.stock.HistoryEntrust", 0);
-        hashmap.put("com.cssweb.android.trade.stock.HistoryDeal", 0);
-        hashmap.put("com.cssweb.android.trade.stock.Bill", 0);
-        hashmap.put("com.cssweb.android.trade.stock.NewStockMatch", 0);
-        hashmap.put("com.cssweb.android.trade.stock.ModifyPassword", 0);
-        hashmap.put("com.cssweb.android.trade.stock.StockList", 0);
-        hashmap.put("com.cssweb.android.trade.stock.ShareholderList", 0);
-        hashmap.put("com.cssweb.android.trade.login.LoginActivity", 0);
-        hashmap.put("com.cssweb.android.trade.bank.TransferQuery", 0);
-        hashmap.put("com.cssweb.android.trade.bank.BankBalanceQuery", 0);
-        hashmap.put("com.cssweb.android.trade.bank.BankFundTransfer", 0);
-        hashmap.put("com.cssweb.android.trade.bank.FundBankTransfer", 0);
-        hashmap.put("com.cssweb.android.trade.bank.TransferDateRange", 0);
-        hashmap.put("com.cssweb.android.trade.transferFunds.FundsDetails", 0);
-        hashmap.put("com.cssweb.android.trade.transferFunds.ZfTransfer", 0);
+        hashmap = new HashMap<String, String>();
+        hashmap.put(".MainActivity", "");
+        hashmap.put(".JlpActivity","");
+        
+        hashmap.put(".RestartDialog","");
+        hashmap.put(".TranslucentMenuActivity","");
+        hashmap.put("com.cssweb.android.sms.SMSJHActivity","");
+        hashmap.put("com.cssweb.android.quote.SQS","");
+        hashmap.put("com.cssweb.android.quote.DSS","");
+        hashmap.put("com.cssweb.android.quote.ZSS","");
+        hashmap.put("com.cssweb.android.quote.ZJS","");
+        hashmap.put("com.cssweb.android.quote.QQSP","");
+        hashmap.put("com.cssweb.android.quote.QHSCGridActivity","");
+        hashmap.put("com.cssweb.android.quote.QHSCBaseActivity","");
+        hashmap.put("com.cssweb.android.quote.HSZS","");
+        hashmap.put("com.cssweb.android.quote.GlobalMarketActivity","");
+        hashmap.put("com.cssweb.android.quote.OTCFundActivity","");
+        hashmap.put("com.cssweb.android.quote.PaiMing","");
+        hashmap.put("com.cssweb.android.quote.DaPan","");
+        hashmap.put("com.cssweb.android.quote.FenLei","");
+        hashmap.put("com.cssweb.android.quote.QueryStock","");
+        hashmap.put("com.cssweb.android.quote.PersonalStock","");
+        hashmap.put("com.cssweb.android.quote.QuoteAlarm","");
+        hashmap.put("com.cssweb.android.quote.TrendActivity","");
+        hashmap.put("com.cssweb.android.quote.KLineActivity","");
+        hashmap.put("com.cssweb.android.quote.KLine2Activity","");
+        hashmap.put("com.cssweb.android.quote.QuotePrice","");
+        hashmap.put("com.cssweb.android.quote.QuoteDetail","");
+        hashmap.put("com.cssweb.android.quote.GetF10List","");
+        hashmap.put("com.cssweb.android.quote.GetF10Content","");
+        hashmap.put("com.cssweb.android.quote.GlobalMarket","");
+        hashmap.put("com.cssweb.android.quote.FLineActivity","");
+        hashmap.put("com.cssweb.android.quote.StockTypeFund","");
+        hashmap.put("com.cssweb.android.quote.FundQueryCondition","");
+        hashmap.put("com.cssweb.android.quote.FundQuery","");
+        hashmap.put("com.cssweb.android.quote.Sunpublic","");
+        hashmap.put("com.cssweb.android.quote.JingZhiQuery","");
+        hashmap.put("com.cssweb.android.quote.QuoteWarning","");
+        hashmap.put("com.cssweb.android.quote.QuoteSet","");
+        hashmap.put("com.cssweb.android.quote.QHHQActivity","");
+        hashmap.put("com.cssweb.android.quote.GGHQActivity","");
+        hashmap.put("com.cssweb.android.quote.HKMainboard","");
+        hashmap.put("com.cssweb.android.quote.GlobalHuiShi","");
+        hashmap.put("com.cssweb.android.quote.SunpublicQueryCondition","");
+        hashmap.put("com.cssweb.android.web.OpenHrefDisplay","");
+        hashmap.put("com.cssweb.android.web.WebViewDisplay","");
+        hashmap.put("com.cssweb.android.web.JxgpcActivity","");
+        hashmap.put("com.cssweb.android.web.CfpdActivity","");
+        hashmap.put("com.cssweb.android.web.OpenPdfDisplay","");
+        hashmap.put("com.cssweb.android.fzjy.VistualTrade","");
+        hashmap.put("com.cssweb.android.sz.ClearActivity","");
+        hashmap.put("com.cssweb.android.sz.Setting","");
+        hashmap.put("com.cssweb.android.sz.HelpActivity","");
+        hashmap.put("com.cssweb.android.sz.CustomSettingActivity","");
+        hashmap.put("com.cssweb.android.sz.HQRefreshSettingActivity","");
+        hashmap.put("com.cssweb.android.sz.ServerSettingActivity","");
+        hashmap.put("com.cssweb.android.sz.LockSettingActivity","");
+        hashmap.put("com.cssweb.android.tyyh.ExperienceUsers","");
+        hashmap.put("com.cssweb.android.video.CustomMediaPlayer","");
+        hashmap.put("com.cssweb.android.video.VideoPlayer","");
+        hashmap.put("com.cssweb.android.trade.CnjjActivity","");
+        hashmap.put("com.cssweb.android.trade.FundActivity","");
+        hashmap.put("com.cssweb.android.trade.BankActivity","");
+        hashmap.put("com.cssweb.android.trade.TransferFundsActivity","");
+        hashmap.put("com.cssweb.android.trade.user.AccountManage","");
+        hashmap.put("com.cssweb.android.trade.stock.GetDetails","");
+        hashmap.put("com.cssweb.android.trade.stock.GetDetailsH","");
+        hashmap.put("com.cssweb.android.trade.stock.StockTrading","");
+        hashmap.put("com.cssweb.android.trade.stock.GetPosition","");
+        hashmap.put("com.cssweb.android.trade.stock.StockCancel","");
+        hashmap.put("com.cssweb.android.trade.stock.AssetQuery","");
+        hashmap.put("com.cssweb.android.trade.stock.TodayEntrust","");
+        hashmap.put("com.cssweb.android.trade.stock.TodayDeal","");
+        hashmap.put("com.cssweb.android.trade.stock.ExchangeFund","");
+        hashmap.put("com.cssweb.android.trade.stock.StockWarrant","");
+        hashmap.put("com.cssweb.android.trade.stock.StockWarrant","");
+        hashmap.put("com.cssweb.android.util.DateRange","");
+        hashmap.put("com.cssweb.android.trade.stock.HistoryEntrust","");
+        hashmap.put("com.cssweb.android.trade.stock.HistoryDeal","");
+        hashmap.put("com.cssweb.android.trade.stock.Bill","");
+        hashmap.put("com.cssweb.android.trade.stock.NewStockMatch","");
+        hashmap.put("com.cssweb.android.trade.stock.ModifyPassword","");
+        hashmap.put("com.cssweb.android.trade.stock.StockList","");
+        hashmap.put("com.cssweb.android.trade.stock.ShareholderList","");
+        hashmap.put("com.cssweb.android.trade.login.LoginActivity","");
+        hashmap.put("com.cssweb.android.trade.bank.TransferQuery","");
+        hashmap.put("com.cssweb.android.trade.bank.BankBalanceQuery","");
+        hashmap.put("com.cssweb.android.trade.bank.BankFundTransfer","");
+        hashmap.put("com.cssweb.android.trade.bank.FundBankTransfer","");
+        hashmap.put("com.cssweb.android.trade.bank.TransferDateRange","");
+        hashmap.put("com.cssweb.android.trade.transferFunds.FundsDetails","");
+        hashmap.put("com.cssweb.android.trade.transferFunds.ZfTransfer","");
         hashmap.put(
                 "com.cssweb.android.trade.transferFunds.TransferFundsDateRange",
-                0);
+               "");
         hashmap.put(
-                "com.cssweb.android.trade.transferFunds.TransferFundsQuery", 0);
-        hashmap.put("com.cssweb.android.trade.stock.ModifyContactInfo", 0);
-        hashmap.put("com.cssweb.android.trade.fund.FundTrading", 0);
-        hashmap.put("com.cssweb.android.trade.fund.TodayTrust", 0);
-        hashmap.put("com.cssweb.android.trade.fund.FundTransfer", 0);
-        hashmap.put("com.cssweb.android.trade.fund.FundMelonSet", 0);
-        hashmap.put("com.cssweb.android.trade.fund.FundPortio", 0);
-        hashmap.put("com.cssweb.android.trade.fund.FundAccount", 0);
-        hashmap.put("com.cssweb.android.trade.fund.FundRiskTest", 0);
-        hashmap.put("com.cssweb.android.trade.fund.HistoryConclusion", 0);
-        hashmap.put("com.cssweb.android.trade.fund.HistoryTrust", 0);
-        hashmap.put("com.cssweb.android.trade.fund.FundCompany", 0);
-        hashmap.put("com.cssweb.android.trade.fund.FundAccountForm", 0);
+                "com.cssweb.android.trade.transferFunds.TransferFundsQuery","");
+        hashmap.put("com.cssweb.android.trade.stock.ModifyContactInfo","");
+        hashmap.put("com.cssweb.android.trade.fund.FundTrading","");
+        hashmap.put("com.cssweb.android.trade.fund.TodayTrust","");
+        hashmap.put("com.cssweb.android.trade.fund.FundTransfer","");
+        hashmap.put("com.cssweb.android.trade.fund.FundMelonSet","");
+        hashmap.put("com.cssweb.android.trade.fund.FundPortio","");
+        hashmap.put("com.cssweb.android.trade.fund.FundAccount","");
+        hashmap.put("com.cssweb.android.trade.fund.FundRiskTest","");
+        hashmap.put("com.cssweb.android.trade.fund.HistoryConclusion","");
+        hashmap.put("com.cssweb.android.trade.fund.HistoryTrust","");
+        hashmap.put("com.cssweb.android.trade.fund.FundCompany","");
+        hashmap.put("com.cssweb.android.trade.fund.FundAccountForm","");
     }
 }
