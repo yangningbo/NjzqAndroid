@@ -47,6 +47,7 @@ public class TrackService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         System.out.println(this.getClass().getName() + "."
                 + new Exception().getStackTrace()[0].getMethodName() + "()");
+        
         return START_STICKY;
     }
 
