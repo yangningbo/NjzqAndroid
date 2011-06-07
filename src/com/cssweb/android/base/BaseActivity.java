@@ -17,8 +17,10 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -46,6 +48,7 @@ import com.cssweb.android.main.R;
 import com.cssweb.android.service.AutoReceiver;
 import com.cssweb.android.service.MenuService;
 import com.cssweb.android.session.TradeUser;
+import com.cssweb.android.user.track.Gloable;
 import com.cssweb.android.util.ActivityUtil;
 import com.cssweb.android.util.MenuUtils;
 import com.cssweb.android.util.NetUtils;
@@ -96,9 +99,35 @@ public class BaseActivity extends Activity {
 		alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		Intent intent = new Intent(this, AutoReceiver.class);
 		pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+		Gloable.getInstance().setIsLock(false);
+		Gloable.getInstance().setIsHome(false);
+		listenScreen();
 	}
 
-	protected void initTitle(int resid1, int resid2, String str) {
+	/**
+	 * 监听是否锁屏
+	 */
+	private void listenScreen() {
+	        registerReceiver(new BroadcastReceiver() {
+	            
+	            @Override
+	            public void onReceive(Context context, Intent intent) {
+	                System.out.println("OFF"); 
+	                Gloable.getInstance().setIsLock(true);
+	            }
+	        }, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+	        registerReceiver(new BroadcastReceiver() {
+	            
+	            @Override
+	            public void onReceive(Context context, Intent intent) {
+	                System.out.println("ON");  
+	                Gloable.getInstance().setIsLock(false);
+	            }
+	        }, new IntentFilter(Intent.ACTION_SCREEN_ON));
+        
+    }
+
+    protected void initTitle(int resid1, int resid2, String str) {
 		btnLeft = (Button) findViewById(R.id.zr_backmenu);
 		btnRight = (Button) findViewById(R.id.zr_allmenu);
 		midText = (TextView) findViewById(R.id.zr_maintitle);
@@ -490,6 +519,7 @@ public class BaseActivity extends Activity {
 				e.printStackTrace();
 			}
 		}
+		Gloable.getInstance().setIsHome(false);
 	}
 
 	@Override

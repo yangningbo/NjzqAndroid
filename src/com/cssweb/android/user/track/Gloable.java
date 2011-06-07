@@ -2,7 +2,8 @@ package com.cssweb.android.user.track;
 
 
 public class Gloable {
-
+    private Boolean isLock;//是否锁屏
+    private Boolean isHome;//是否切回主页
     private String IMEI;// 移动设备编号
 
     private String sysCode;// 系统编码
@@ -159,6 +160,22 @@ public class Gloable {
 
     public String getJsonString() {
         return jsonString;
+    }
+
+    public void setIsLock(Boolean isLock) {
+        this.isLock = isLock;
+    }
+
+    public Boolean getIsLock() {
+        return isLock;
+    }
+
+    public void setIsHome(Boolean isHome) {
+        this.isHome = isHome;
+    }
+
+    public Boolean getIsHome() {
+        return isHome;
     }
 
 }
